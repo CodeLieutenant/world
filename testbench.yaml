@@ -1,0 +1,21 @@
+laravel: '@testbench'
+
+providers:
+  - Nnjeim\World\WorldServiceProvider
+
+migrations:
+  - database/migrations
+
+seeders:
+  - Nnjeim\World\Database\Seeders\WorldSeeder
+
+workbench:
+  start: '/'
+  install: true
+  health: false
+  welcome: false
+  build:
+    - asset-publish
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh

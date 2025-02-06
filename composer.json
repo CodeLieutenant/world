@@ -1,60 +1,78 @@
 {
-    "name": "nnjeim/world",
-    "description": "Laravel countries, states, cities and currencies",
-    "keywords": [
-        "laravel",
-        "lumen",
-        "countries",
-        "cities",
-        "states",
-        "timezones",
-        "currencies"
+  "name": "nnjeim/world",
+  "description": "Laravel countries, states, cities and currencies",
+  "keywords": [
+    "laravel",
+    "lumen",
+    "countries",
+    "cities",
+    "states",
+    "timezones",
+    "currencies"
+  ],
+  "homepage": "https://github.com/nnjeim/world.git",
+  "license": "MIT",
+  "type": "laravel-package",
+  "authors": [
+    {
+      "name": "Najm Njeim",
+      "email": "najm@njeim.net",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "illuminate/database": "^10.48.4|^11.0.8|^12.0",
+    "illuminate/config": "^10.48.4|^11.0.8|^12.0",
+    "illuminate/console": "^10.48.4|^11.0.8|^12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": ">=v4.0.0",
+    "phpunit/phpunit": ">=8.5.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Nnjeim\\World\\": "src/",
+      "Nnjeim\\World\\Database\\Seeders\\": "database/seeders"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Nnjeim\\World\\Tests\\": "tests/",
+      "App\\": "workbench/app/",
+      "Database\\Factories\\": "workbench/database/factories/",
+      "Database\\Seeders\\": "workbench/database/seeders/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+    "post-autoload-dump": [
+      "@clear",
+      "@prepare"
     ],
-    "homepage": "https://github.com/nnjeim/world.git",
-    "license": "MIT",
-    "type": "laravel-package",
-    "authors": [
-        {
-            "name": "Najm Njeim",
-            "email": "najm@njeim.net",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">=7.4"
-    },
-    "require-dev": {
-        "orchestra/testbench": ">=v4.0.0",
-        "phpunit/phpunit": ">=8.5.8"
-    },
-    "autoload": {
-        "psr-4": {
-            "Nnjeim\\World\\": "src/",
-            "Nnjeim\\World\\Database\\Seeders\\": "src/Database/Seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Nnjeim\\World\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Nnjeim\\World\\WorldServiceProvider"
-            ],
-            "aliases": {
-                "Country": "Nnjeim\\World\\World"
-            }
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+    "prepare": "@php vendor/bin/testbench package:discover --ansi",
+    "build": "@php vendor/bin/testbench workbench:build --ansi",
+    "serve": [
+      "Composer\\Config::disableProcessTimeout",
+      "@build",
+      "@php vendor/bin/testbench serve --ansi"
+    ]
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Nnjeim\\World\\WorldServiceProvider"
+      ],
+      "aliases": {
+        "Country": "Nnjeim\\World\\World"
+      }
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

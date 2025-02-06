@@ -2,80 +2,71 @@
 
 namespace Nnjeim\World;
 
+use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Support\ServiceProvider;
 
 class WorldServiceProvider extends ServiceProvider
 {
-	/**
-	 * Register services.
-	 *
-	 * @return void
-	 */
-	public function register(): void
-	{
-		// Register the main class to use with the facade
-		$this->app->singleton('world', fn () => new WorldHelper());
-	}
+    public function register(): void
+    {
+        // Register the main class to use with the facade
+        $this->app->singleton('world', WorldHelper::class);
+        $this->app->singleton(WorldHelper::class);
 
-	/**
-	 * Boot services.
-	 *
-	 * @return void
-	 */
-	public function boot(): void
-	{
-		// Load routes
-		$this->loadRoutesFrom(__DIR__ . '/Routes/index.php');
-		// Load translations
-		$this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'world');
+        $this->mergeConfigFrom(__DIR__ . '/../config/world.php', 'world');
+    }
 
-		if ($this->app->runningInConsole()) {
-			// Load the database migrations.
-			$this->loadMigrations();
-			// Publish the resources.
-			$this->publishResources();
-			// Load commands
-			$this->loadCommands();
-		}
-	}
+    public function boot(Config $config): void
+    {
+        if ($config->get('world.routes')) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/index.php');
+        }
 
-	/**
-	 * method to load the migrations when php migrate is run in the console.
-	 * @return void
-	 */
-	private function loadMigrations(): void
-	{
-		$this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
-	}
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'world');
 
-	/**
-	 * Method to publish the resource to the app resources folder
-	 * @return void
-	 */
-	private function publishResources(): void
-	{
-		$this->publishes([
-			__DIR__ . '/../config/world.php' => config_path('world.php'),
-		], 'world');
+        if ($this->app->runningInConsole()) {
+            // Load migrations
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+            // Publish the resources.
+            $this->publishResources();
+            // Load commands
+            $this->loadCommands();
+        }
+    }
 
-		$this->publishes([
-			__DIR__ . '/Database/Seeders/WorldSeeder.php' => database_path('seeders/WorldSeeder.php'),
-		], 'world');
+    /**
+     * Method to publish the resource to the app resources folder
+     * @return void
+     */
+    private function publishResources(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../config/world.php' => config_path('world.php'),
+        ], ['world', 'world-config']);
 
-		$this->publishes([
-			__DIR__ . '/../resources/lang' => resource_path('lang/vendor/world'),
-		], 'world');
-	}
+        $this->publishes([
+            __DIR__ . '/Database/Seeders/WorldSeeder.php' => database_path('seeders/WorldSeeder.php'),
+        ], ['world', 'world-seeder']);
 
-	/**
-	 * Method to publish the resource to the app resources folder
-	 * @return void
-	 */
-	private function loadCommands(): void
-	{
-		$this->commands([
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/world'),
+        ], ['world', 'world-lang']);
+
+        $this->publishesMigrations([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], ['world', 'world-migrations']);
+    }
+
+    /**
+     * Method to publish the resource to the app resources folder
+     * @return void
+     */
+    private function loadCommands(): void
+    {
+        $this->commands([
             Commands\InstallWorldData::class,
-			Commands\RefreshWorldData::class,
-		]);
-	}
+            Commands\RefreshWorldData::class,
+        ]);
+    }
 }
