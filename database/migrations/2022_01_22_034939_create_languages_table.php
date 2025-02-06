@@ -24,10 +24,12 @@ class CreateLanguagesTable extends Migration
 
         Schema::create(config('world.migrations.languages.table_name'), function (Blueprint $table) {
             $table->id();
-            $table->char('code', 2);
-            $table->string('name');
+            $table->char('code', 2)->unique();
+            $table->string('name')->unique();
             $table->string('name_native');
             $table->char('dir', 3);
+
+            $table->unique(['name', 'code']);
         });
     }
 

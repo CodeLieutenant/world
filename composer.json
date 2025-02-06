@@ -27,8 +27,8 @@
     "illuminate/console": "^10.48.4|^11.0.8|^12.0"
   },
   "require-dev": {
-    "orchestra/testbench": ">=v4.0.0",
-    "phpunit/phpunit": ">=8.5.8"
+    "orchestra/testbench": "^8.8.0",
+    "phpunit/phpunit": "^10.1"
   },
   "autoload": {
     "psr-4": {

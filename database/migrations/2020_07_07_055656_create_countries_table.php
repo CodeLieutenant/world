@@ -24,13 +24,13 @@ class CreateCountriesTable extends Migration
 
         Schema::create(config('world.migrations.countries.table_name'), function (Blueprint $table) {
             $table->id();
-            $table->string('iso2', 2);
-            $table->string('name');
+            $table->char('iso2', 2)->unique();
+            $table->string('name')->unique();
             $table->tinyInteger('status')->default(1);
 
             foreach (config('world.migrations.countries.optional_fields') as $field => $value) {
                 if ($value['required']) {
-                    $table->string($field, $value['length'] ?? null);
+                    $table->{$value['type']}($field, $value['length'] ?? null);
                 }
             }
         });

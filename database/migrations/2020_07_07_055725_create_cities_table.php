@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Nnjeim\World\Models\Country;
+use Nnjeim\World\Models\State;
 
 class CreateCitiesTable extends Migration
 {
@@ -24,15 +26,22 @@ class CreateCitiesTable extends Migration
 
         Schema::create(config('world.migrations.cities.table_name'), function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id');
-            $table->foreignId('state_id');
-            $table->string('name');
+            $table->string('name')->unique();
 
             foreach (config('world.migrations.cities.optional_fields') as $field => $value) {
                 if ($value['required']) {
-                    $table->string($field, $value['length'] ?? null);
+                    $table->{$value['type']}($field, $value['length'] ?? null);
                 }
             }
+
+            $table->foreignIdFor(Country::class)
+                ->references(config('world.migrations.countries.table_name'))
+                ->on('id')
+                ->cascadeOnDelete();
+            $table->foreignIdFor(State::class)
+                ->references(config('world.migrations.states.table_name'))
+                ->on('id')
+                ->cascadeOnDelete();
         });
     }
 

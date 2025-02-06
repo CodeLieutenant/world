@@ -53,7 +53,12 @@ class WorldServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/world'),
         ], ['world', 'world-lang']);
 
-        $this->publishesMigrations([
+        $method = match (method_exists($this, 'publishesMigrations')) {
+            true => 'publishesMigrations',
+            default => 'publishes',
+        };
+
+        $this->{$method}([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], ['world', 'world-migrations']);
     }
